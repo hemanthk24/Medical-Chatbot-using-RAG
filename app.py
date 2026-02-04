@@ -145,12 +145,16 @@ if user_question:
 
         st.chat_message("assistant").write(clarification)
         st.session_state.messages.append({"role": "assistant", "content": clarification})
-
+    
     else:
         # Use rewritten question for RAG
-        response = rag_chain.invoke({"question": rewritten})
-        answer = response["answer"]
-
-        st.chat_message("assistant").write(answer)
-        st.session_state.messages.append({"role": "assistant", "content": answer})
-
+        docs = docsearch.similarity_search_with_score(rewritten, k=3)
+        best_score = docs[0][1]
+        if best_score < 0.6:  # confidence threshold
+            st.chat_message("assistant").write("I'm not confident about the answer. Please consult a medical professional.")
+            st.session_state.messages.append({"role": "assistant", "content": "I'm not confident about the answer. Please consult a medical professional."})
+        else:
+            response = rag_chain({"question": rewritten})
+            answer = response["answer"]
+            st.chat_message("assistant").write(answer)
+            st.session_state.messages.append({"role": "assistant", "content": answer})
