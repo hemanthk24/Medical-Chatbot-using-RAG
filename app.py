@@ -15,7 +15,6 @@ from src.prompt import system_prompt
 # -------------------------
 # Load environment
 # -------------------------
-load_dotenv()
 
 PINECONE_API_KEY = st.secrets["PINECONE_API_KEY"]
 OPENAI_API_KEY = st.secrets["OPENAI_API_KEY"]
@@ -131,7 +130,11 @@ if user_question:
     st.session_state.messages.append({"role": "user", "content": user_question})
 
     # Rewrite for safety
-    rewritten = rewrite_question(user_question)
+    has_history = len(st.session_state.memory.chat_memory.messages) > 0
+    if not has_history:
+        rewritten = rewrite_question(user_question)
+    else:
+        rewritten = user_question
 
     # Debug (optional)
     print("Rewritten:", rewritten)
@@ -139,7 +142,6 @@ if user_question:
     # If unclear → stop
     if rewritten == "NEED CLARIFICATION":
         clarification = "Please clarify your question so I can help."
-
         st.chat_message("assistant").write(clarification)
         st.session_state.messages.append({"role": "assistant", "content": clarification})
     
