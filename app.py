@@ -17,11 +17,8 @@ from src.prompt import system_prompt
 # -------------------------
 load_dotenv()
 
-PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-
-os.environ["PINECONE_API_KEY"] = PINECONE_API_KEY
-os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY
+PINECONE_API_KEY = st.secrets["PINECONE_API_KEY"]
+OPENAI_API_KEY = st.secrets["OPENAI_API_KEY"]
 
 # -------------------------
 # Page config
