@@ -149,7 +149,7 @@ if user_question:
         # Use rewritten question for RAG
         docs = docsearch.similarity_search_with_score(rewritten, k=3)
         best_score = docs[0][1]
-        if best_score < 0.6:  # confidence threshold
+        if best_score < 0.5:  # confidence threshold
             st.chat_message("assistant").write("I'm not confident about the answer. Please consult a medical professional.")
             st.session_state.messages.append({"role": "assistant", "content": "I'm not confident about the answer. Please consult a medical professional."})
         else:
