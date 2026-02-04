@@ -138,6 +138,7 @@ if user_question:
 
     # Debug (optional)
     print("Rewritten:", rewritten)
+    threshold = 0.55 if not has_history else 0.3
 
     # If unclear → stop
     if rewritten == "NEED CLARIFICATION":
@@ -149,9 +150,9 @@ if user_question:
         # Use rewritten question for RAG
         docs = docsearch.similarity_search_with_score(rewritten, k=3)
         best_score = docs[0][1]
-        if best_score < 0.5:  # confidence threshold
-            st.chat_message("assistant").write("I'm not confident about the answer. Please consult a medical professional.")
-            st.session_state.messages.append({"role": "assistant", "content": "I'm not confident about the answer. Please consult a medical professional."})
+        if best_score < threshold:  # confidence threshold
+            st.chat_message("assistant").write("I don’t have enough verified medical information to answer this confidently. For safety, please consult a qualified healthcare professional.")
+            st.session_state.messages.append({"role": "assistant", "content": "I don’t have enough verified medical information to answer this confidently. For safety, please consult a qualified healthcare professional."})
         else:
             response = rag_chain({"question": rewritten})
             answer = response["answer"]
